@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">WeatherApp</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_clickable_text">ClickableText</string>
+    <string name="title_activity_data_field">DataField</string>
+    <string name="title_activity_password_field">PasswordField</string>
 </resources>
