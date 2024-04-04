@@ -13,6 +13,21 @@
         android:theme="@style/Theme.WeatherApp"
         tools:targetApi="31">
         <activity
+            android:name=".pages.RegisterPage"
+            android:exported="false"
+            android:label="@string/title_activity_register_page"
+            android:theme="@style/Theme.WeatherApp" />
+        <activity
+            android:name=".pages.HomePage"
+            android:exported="false"
+            android:label="@string/title_activity_home_page"
+            android:theme="@style/Theme.WeatherApp" />
+        <activity
+            android:name=".pages.LoginPage"
+            android:exported="false"
+            android:label="@string/title_activity_login_page"
+            android:theme="@style/Theme.WeatherApp" />
+        <activity
             android:name=".components.PasswordField"
             android:exported="false"
             android:label="@string/title_activity_password_field"

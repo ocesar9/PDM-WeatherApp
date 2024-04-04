@@ -5,4 +5,7 @@
     <string name="title_activity_clickable_text">ClickableText</string>
     <string name="title_activity_data_field">DataField</string>
     <string name="title_activity_password_field">PasswordField</string>
+    <string name="title_activity_login_page">LoginPage</string>
+    <string name="title_activity_home_page">HomePage</string>
+    <string name="title_activity_register_page">RegisterPage</string>
 </resources>
