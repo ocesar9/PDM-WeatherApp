@@ -10,4 +10,7 @@
     <string name="title_activity_register_page">RegisterPage</string>
     <string name="title_activity_list_page">ListPage</string>
     <string name="title_activity_map_page">MapPage</string>
+    <string name="title_activity_bottom_nav_item">BottomNavItem</string>
+    <string name="title_activity_bottom_nav_bar">BottomNavBar</string>
+    <string name="title_activity_main_nav_host">MainNavHost</string>
 </resources>
