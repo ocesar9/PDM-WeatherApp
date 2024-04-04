@@ -17,21 +17,22 @@ import androidx.compose.ui.unit.sp
 import com.weatherapp.R
 
 @Composable
-fun HomePage(modifier: Modifier = Modifier) {
+fun MapPage(modifier: Modifier = Modifier) {
     val activity = LocalContext.current as? Activity
 
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxSize().background(colorResource(id = R.color.teal_700)).wrapContentSize(Alignment.Center)
+        modifier = modifier.fillMaxSize().background(colorResource(id = R.color.purple_700)).wrapContentSize(Alignment.Center)
     ) {
         Text(
-            text = "Home",
+            text = "Map",
             fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally),
             textAlign = TextAlign.Center,
             fontSize = 20.sp
         )
+
     }
 }

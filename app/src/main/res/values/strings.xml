@@ -8,4 +8,6 @@
     <string name="title_activity_login_page">LoginPage</string>
     <string name="title_activity_home_page">HomePage</string>
     <string name="title_activity_register_page">RegisterPage</string>
+    <string name="title_activity_list_page">ListPage</string>
+    <string name="title_activity_map_page">MapPage</string>
 </resources>

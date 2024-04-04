@@ -17,16 +17,16 @@ import androidx.compose.ui.unit.sp
 import com.weatherapp.R
 
 @Composable
-fun HomePage(modifier: Modifier = Modifier) {
+fun ListPage(modifier: Modifier = Modifier) {
     val activity = LocalContext.current as? Activity
 
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxSize().background(colorResource(id = R.color.teal_700)).wrapContentSize(Alignment.Center)
+        modifier = modifier.fillMaxSize().background(colorResource(id = R.color.purple_200)).wrapContentSize(Alignment.Center)
     ) {
         Text(
-            text = "Home",
+            text = "Favotires",
             fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally),
