@@ -18,8 +18,6 @@ import com.weatherapp.R
 
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
-    val activity = LocalContext.current as? Activity
-
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
