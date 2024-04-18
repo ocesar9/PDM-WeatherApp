@@ -13,6 +13,11 @@
         android:theme="@style/Theme.WeatherApp"
         tools:targetApi="31">
         <activity
+            android:name=".components.MainViewModel"
+            android:exported="false"
+            android:label="@string/title_activity_main_view_model"
+            android:theme="@style/Theme.WeatherApp" />
+        <activity
             android:name=".components.nav.MainNavHost"
             android:exported="false"
             android:label="@string/title_activity_main_nav_host"
