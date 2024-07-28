@@ -1,4 +1,5 @@
 import android.app.Activity
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,13 +20,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ListPage(viewModel: MainViewModel) {
-    val activity = LocalContext.current as? Activity
+fun ListPage(
+    viewModel: MainViewModel,
+    context: Context
+) {
     val cities = viewModel.cities
     LazyColumn (
         modifier = Modifier
@@ -36,12 +38,12 @@ fun ListPage(viewModel: MainViewModel) {
                 city -> CityItem(
                         city = city,
                         onClick = {
-                            Toast.makeText(activity, "City added to your wish list", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "City added to your wish list", Toast.LENGTH_LONG).show()
 
                         },
                         onClose = {
                             viewModel.remove(city)
-                            Toast.makeText(activity, "City was removed from your wish list", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "City was removed from your wish list", Toast.LENGTH_LONG).show()
                         }
             )
         }

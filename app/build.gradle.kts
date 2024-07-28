@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -88,4 +89,12 @@ dependencies {
 
     // Jetpack Compose Integration
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    // Google maps
+    implementation("com.google.android.gms:play-services-maps:18.2.0");
+
+    // Google maps for compose
+    implementation("com.google.maps.android:maps-compose:2.8.0")
+
+
 }
