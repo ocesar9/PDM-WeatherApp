@@ -28,7 +28,10 @@ fun MainNavHost(
             )
         }
         composable(route = BottomNavItem.MapPage.route) {
-            MapPage(context = context)
+            MapPage(
+                context = context,
+                viewModel = viewModel
+            )
         }
     }
 }
