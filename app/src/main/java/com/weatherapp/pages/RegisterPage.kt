@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.weatherapp.LoginActivity
 
 @Composable
@@ -46,13 +48,16 @@ fun RegisterPage(modifier: Modifier = Modifier){
         Row(modifier = modifier) {
             Button(
                 onClick = {
-                    Toast.makeText(activity, "Registration OK!", Toast.LENGTH_LONG).show()
-                    activity?.startActivity(
-                        Intent(activity, LoginActivity::class.java).setFlags(
-                            Intent.FLAG_ACTIVITY_SINGLE_TOP
-                        )
-                    )
-                    name = "" ; email = ""; password = ""; confirmPassword = "";
+                    Firebase.auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(activity!!) {
+                        task  ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(activity,"Registro OK!", Toast.LENGTH_LONG).show();
+                            activity.finish()
+                            email = "" ; password = ""; confirmPassword = ""; name = "";
+                        }else {
+                            Toast.makeText(activity,"Registro FALHOU!", Toast.LENGTH_LONG).show();
+                        }
+                    }
                 },
                 enabled = name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()
             ) {

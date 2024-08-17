@@ -33,6 +33,8 @@ import androidx.navigation.compose.rememberNavController
 import com.weatherapp.components.nav.BottomNavItem
 import com.weatherapp.ui.theme.WeatherAppTheme
 import android.Manifest
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
@@ -54,7 +56,13 @@ class MainActivity : ComponentActivity() {
                         TopAppBar(
                             title = { Text("Welcome!") },
                             actions = {
-                                IconButton(onClick = { finish() }) {
+                                IconButton(
+                                    onClick = {
+                                        Firebase.auth.signOut()
+                                        finish()
+                                    }
+                                ) {
+
                                     Icon(
                                         imageVector = Icons.Default.ExitToApp,
                                         contentDescription = "Localized description"
