@@ -33,77 +33,92 @@ import androidx.navigation.compose.rememberNavController
 import com.weatherapp.components.nav.BottomNavItem
 import com.weatherapp.ui.theme.WeatherAppTheme
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModels();
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            var showDialog by remember { mutableStateOf(false) }
-            val viewModel: MainViewModel by viewModels()
-            val navController = rememberNavController()
 
-            val context = LocalContext.current
-            val currentRoute = navController.currentBackStackEntryAsState()
-            val showButton = currentRoute.value?.destination?.route != BottomNavItem.MapPage.route
-            val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(), onResult = {} )
+        if (!viewModel.loggedIn) {
+            this.finish();
+        }else {
+            setContent {
+                var showDialog by remember { mutableStateOf(false) }
+                val viewModel: MainViewModel by viewModels();
+                val navController = rememberNavController()
 
-            WeatherAppTheme {
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = { Text("Welcome!") },
-                            actions = {
-                                IconButton(
-                                    onClick = {
-                                        Firebase.auth.signOut()
-                                        finish()
+                val context = LocalContext.current
+                val currentRoute = navController.currentBackStackEntryAsState()
+                val showButton =
+                    currentRoute.value?.destination?.route != BottomNavItem.MapPage.route
+                val launcher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.RequestPermission(),
+                    onResult = {})
+
+
+                WeatherAppTheme {
+                    Scaffold(
+                        topBar = {
+                            TopAppBar(
+                                title = { Text("Welcome!") },
+                                actions = {
+                                    IconButton(
+                                        onClick = {
+                                            Firebase.auth.signOut()
+                                            finish()
+                                        }
+                                    ) {
+
+                                        Icon(
+                                            imageVector = Icons.Default.ExitToApp,
+                                            contentDescription = "Localized description"
+                                        )
                                     }
-                                ) {
-
+                                }
+                            )
+                        },
+                        bottomBar = { BottomNavBar(navController = navController) },
+                        floatingActionButton = {
+                            if (showButton) {
+                                FloatingActionButton(onClick = { showDialog = true }) {
                                     Icon(
-                                        imageVector = Icons.Default.ExitToApp,
-                                        contentDescription = "Localized description"
+                                        Icons.Default.Add,
+                                        contentDescription = "Add"
                                     )
                                 }
                             }
-                        )
-                    },
-                    bottomBar = { BottomNavBar(navController = navController) },
-                    floatingActionButton = {
-                        if(showButton){
-                            FloatingActionButton(onClick = { showDialog = true }) {
-                                Icon(
-                                    Icons.Default.Add,
-                                    contentDescription = "Add"
-                                )
+
+                        }
+                    ) { innerPadding ->
+                        Box(modifier = Modifier.padding(innerPadding)) {
+                            launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                            MainNavHost(
+                                navController = navController,
+                                viewModel = viewModel,
+                                context = context
+                            )
+                        }
+                    }
+
+                    if (showDialog) {
+                        CityDialog(
+                            onDismiss = { showDialog = false },
+                            onConfirm = { city ->
+                                if (city.isNotBlank()) viewModel.add(city)
+                                showDialog = false
                             }
-                        }
-
-                    }
-                ) { innerPadding ->
-                    Box(modifier = Modifier.padding(innerPadding)) {
-                        launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                        MainNavHost(
-                            navController = navController,
-                            viewModel = viewModel,
-                            context = context
                         )
                     }
                 }
 
-                if (showDialog) {
-                    CityDialog(
-                        onDismiss = { showDialog = false },
-                        onConfirm = { city ->
-                            if (city.isNotBlank()) viewModel.add(city)
-                            showDialog = false
-                        }
-                    )
-                }
+
             }
         }
     }
+
 }
