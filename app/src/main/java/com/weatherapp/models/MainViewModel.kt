@@ -5,8 +5,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.weatherapp.models.User
 
 class MainViewModel : ViewModel() {
+
     private var _loggedIn = mutableStateOf(false)
     val loggedIn: Boolean get() = _loggedIn.value
     private val listener = FirebaseAuth.AuthStateListener {
@@ -16,11 +18,18 @@ class MainViewModel : ViewModel() {
         listener.onAuthStateChanged(Firebase.auth)
         Firebase.auth.addAuthStateListener (listener)
     }
+
     override fun onCleared() {
         Firebase.auth.removeAuthStateListener(listener);
     }
 
 //  __________________________________________________________
+
+    private val _user = mutableStateOf (User("", ""))
+    val user : User get() = _user.value
+
+
+
     val _cities = getCities().toMutableStateList()
     val cities: List<City>
     get() = _cities
