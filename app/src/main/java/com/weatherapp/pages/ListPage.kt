@@ -22,12 +22,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.weatherapp.db.FBDatabase
+import com.weatherapp.models.City
 
 @Composable
 fun ListPage(
     viewModel: MainViewModel,
-    context: Context
-) {
+    context: Context,
+    fbDB: FBDatabase,
+
+    ) {
     val cities = viewModel.cities
     LazyColumn (
         modifier = Modifier
@@ -42,7 +46,7 @@ fun ListPage(
 
                         },
                         onClose = {
-                            viewModel.remove(city)
+                            fbDB.remove(city)
                             Toast.makeText(context, "City was removed from your wish list", Toast.LENGTH_LONG).show()
                         }
             )

@@ -33,14 +33,15 @@ import androidx.navigation.compose.rememberNavController
 import com.weatherapp.components.nav.BottomNavItem
 import com.weatherapp.ui.theme.WeatherAppTheme
 import android.Manifest
-import android.content.Context
-import android.content.Intent
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.weatherapp.db.FBDatabase
+import com.weatherapp.models.City
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels();
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -49,8 +50,8 @@ class MainActivity : ComponentActivity() {
         }else {
             setContent {
                 var showDialog by remember { mutableStateOf(false) }
-                val viewModel: MainViewModel by viewModels();
                 val navController = rememberNavController()
+                val fbDB = remember { FBDatabase(viewModel) }
 
                 val context = LocalContext.current
                 val currentRoute = navController.currentBackStackEntryAsState()
@@ -98,9 +99,8 @@ class MainActivity : ComponentActivity() {
                         Box(modifier = Modifier.padding(innerPadding)) {
                             launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                             MainNavHost(
-                                navController = navController,
-                                viewModel = viewModel,
-                                context = context
+                                navController = navController,viewModel,fbDB,context
+
                             )
                         }
                     }
@@ -109,7 +109,7 @@ class MainActivity : ComponentActivity() {
                         CityDialog(
                             onDismiss = { showDialog = false },
                             onConfirm = { city ->
-                                if (city.isNotBlank()) viewModel.add(city)
+                                if (city.isNotBlank()) fbDB.add(city = City(city, ""))
                                 showDialog = false
                             }
                         )
