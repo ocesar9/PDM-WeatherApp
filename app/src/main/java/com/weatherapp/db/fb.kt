@@ -69,22 +69,22 @@ class FBDatabase(
     }
 
     init {
-        auth.addAuthStateListener {
-            auth ->
+        auth.addAuthStateListener { auth ->
             if (auth.currentUser == null) {
                 citiesListReg?.remove()
+
                 return@addAuthStateListener
             }
-            val refCurrUser = db.collection("users").document(auth.currentUser!!.uid)
+            val refCurrUser = db.collection("users")
+                .document(auth.currentUser!!.uid)
             refCurrUser.get().addOnSuccessListener {
-                it.toObject(FBUser::class.java)?.let { user ->
-                    listener?.onUserLoaded(user.toUser())
-                }
+                it.toObject(
+                    FBUser::class.java
+                )?.let { user -> listener?.onUserLoaded(user.toUser()) }
             }
-
-            citiesListReg = refCurrUser.collection("cities").addSnapshotListener {
-                snapshots, ex ->
-                    if(ex != null) return@addSnapshotListener
+            citiesListReg = refCurrUser.collection("cities")
+                .addSnapshotListener { snapshots, ex ->
+                    if (ex != null) return@addSnapshotListener
                     snapshots?.documentChanges?.forEach { change ->
                         val fbCity = change.document.toObject(FBCity::class.java)
                         if (change.type == DocumentChange.Type.ADDED) {
@@ -93,34 +93,26 @@ class FBDatabase(
                             listener?.onCityRemoved(fbCity.toCity())
                         }
                     }
-            }
-
+                }
         }
     }
 
     fun register(user: User) {
-        if (auth.currentUser == null){
-            throw RuntimeException("User not logged in!")
-        }
-        val uid = auth.currentUser!!.uid;
+        if (auth.currentUser == null) throw RuntimeException("User not logged in!")
+        val uid = auth.currentUser!!.uid
         db.collection("users").document(uid + "").set(user.toFBUser());
     }
 
     fun add(city: City) {
-        if (auth.currentUser == null){
-            throw RuntimeException("User not logged in!")
-        }
-
+        if (auth.currentUser == null) throw RuntimeException("User not logged in!")
         val uid = auth.currentUser!!.uid
-        db.collection("users").document(uid).collection("cities").document(city.name).set(city.toFBCity())
+        db.collection("users").document(uid).collection("cities").document(city.name)
+            .set(city.toFBCity())
     }
 
     fun remove(city: City) {
-        if (auth.currentUser == null){
-            throw RuntimeException("User not logged in!")
-        }
-
+        if (auth.currentUser == null) throw RuntimeException("User not logged in!")
         val uid = auth.currentUser!!.uid
-        db.collection("users").document(uid).collection("cities").document(city.name).delete()
+        db.collection ("users").document(uid).collection("cities").document(city.name).delete()
     }
 }

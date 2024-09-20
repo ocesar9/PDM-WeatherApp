@@ -1,4 +1,3 @@
-import android.app.Activity
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -24,12 +23,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.weatherapp.db.FBDatabase
 import com.weatherapp.models.City
+import androidx.compose.runtime.remember
+import com.weatherapp.repo.Repository
+
 
 @Composable
 fun ListPage(
     viewModel: MainViewModel,
     context: Context,
-    fbDB: FBDatabase,
+    repo: Repository,
 
     ) {
     val cities = viewModel.cities
@@ -46,7 +48,7 @@ fun ListPage(
 
                         },
                         onClose = {
-                            fbDB.remove(city)
+                            repo.remove(city)
                             Toast.makeText(context, "City was removed from your wish list", Toast.LENGTH_LONG).show()
                         }
             )
@@ -78,7 +80,6 @@ fun CityItem(
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1f)){
             Text(modifier = Modifier, text = city.name, fontSize = 24.sp)
-            Text(modifier = Modifier, text = city.weather, fontSize = 16.sp)
 
         }
         IconButton(onClick = onClose) {

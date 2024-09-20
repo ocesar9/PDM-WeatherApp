@@ -22,6 +22,10 @@ import androidx.compose.ui.unit.sp
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.weatherapp.LoginActivity
+import com.weatherapp.db.FBDatabase
+import androidx.compose.runtime.remember
+import com.weatherapp.models.User
+
 
 @Composable
 fun RegisterPage(modifier: Modifier = Modifier){
@@ -30,6 +34,7 @@ fun RegisterPage(modifier: Modifier = Modifier){
     var password by rememberSaveable { mutableStateOf("") }
     var confirmPassword by rememberSaveable { mutableStateOf("") }
     val activity = LocalContext.current as? Activity
+    val fbDB = remember { FBDatabase() }
 
     Column (
         modifier = Modifier.padding(16.dp),
@@ -53,6 +58,7 @@ fun RegisterPage(modifier: Modifier = Modifier){
                         if (task.isSuccessful) {
                             Toast.makeText(activity,"Registro OK!", Toast.LENGTH_LONG).show();
                             activity.finish()
+                            fbDB.register(User(name, email))
                             email = "" ; password = ""; confirmPassword = ""; name = "";
                         }else {
                             Toast.makeText(activity,"Registro FALHOU!", Toast.LENGTH_LONG).show();

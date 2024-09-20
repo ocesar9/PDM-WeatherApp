@@ -25,16 +25,18 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.weatherapp.R
 import com.weatherapp.db.FBDatabase
 import com.weatherapp.models.City
+import com.weatherapp.repo.Repository
 
 @Composable
 fun MapPage(
     viewModel: MainViewModel,
     modifier: Modifier = Modifier,
     context: Context,
-    fbDB: FBDatabase,
+    repo : Repository
 
     ) {
     val camPosState = rememberCameraPositionState()
+
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -62,7 +64,9 @@ fun MapPage(
             modifier = Modifier.fillMaxSize(),
             onMapClick = {
 
-                fbDB.add(city = City("City "+it.latitude, weather = "", location = it))
+                repo.addCity(City("City", LatLng(it.latitude, it.longitude)))
+
+
             },
             properties = MapProperties(isMyLocationEnabled = hasLocationPermission),
             uiSettings = MapUiSettings(myLocationButtonEnabled = true)
@@ -76,25 +80,6 @@ fun MapPage(
                     )
                 }
             }
-            Marker(
-                state = MarkerState(position = recife),
-                title = "Recife",
-                snippet = "Marcador em Recife",
-                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
-            )
-            Marker(
-                state = MarkerState(position = caruaru),
-                title = "Caruaru",
-                snippet = "Marcador em Caruaru",
-                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
-            )
-            Marker(
-                state = MarkerState(position = joaopessoa),
-                title = "João Pessoa",
-                snippet = "Marcador em João Pessoa",
-                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
-            )
-
         }
 
     }

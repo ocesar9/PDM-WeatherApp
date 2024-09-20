@@ -5,12 +5,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.weatherapp.components.nav.BottomNavItem
 import com.weatherapp.db.FBDatabase
+import com.weatherapp.repo.Repository
 
 @Composable
 fun MainNavHost(
     navController: NavHostController,
     viewModel: MainViewModel,
-    fbDB: FBDatabase,
+    repository: Repository,
     context: Context
 ) {
     NavHost(
@@ -19,23 +20,21 @@ fun MainNavHost(
     ) {
         composable(route = BottomNavItem.HomePage.route) {
             HomePage(
-                viewModel = viewModel,
-                context = context,
-                fbDB = fbDB
+                repo = repository
             )
         }
         composable(route = BottomNavItem.ListPage.route) {
             ListPage(
                 viewModel = viewModel,
                 context = context,
-                fbDB = fbDB
+                repo = repository
             )
         }
         composable(route = BottomNavItem.MapPage.route) {
             MapPage(
                 context = context,
                 viewModel = viewModel,
-                fbDB = fbDB
+                repo = repository
             )
         }
     }
