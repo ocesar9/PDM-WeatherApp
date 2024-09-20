@@ -1,13 +1,14 @@
 package com.weatherapp.repo
 
 import com.google.android.gms.maps.model.LatLng
+import com.weatherapp.api.WeatherService
 import com.weatherapp.db.FBDatabase
 import com.weatherapp.models.City
 import com.weatherapp.models.User
 
 class Repository(private var listener: Listener) : FBDatabase.Listener {
     private var fbDb = FBDatabase(this)
-//    private var weatherService = WeatherService()
+    private var weatherService = WeatherService()
 
     interface Listener {
         fun onUserLoaded(user: User)
@@ -15,12 +16,32 @@ class Repository(private var listener: Listener) : FBDatabase.Listener {
         fun onCityRemoved(city: City)
     }
 
-    fun addCity(city: City) {
-        fbDb.add(city)
+    fun addCity(name: String) {
+        weatherService.getLocation(name) { lat, lng ->
+            if (lat != null && lng != null) {
+                fbDb.add(
+                    City(
+                        name = name,
+                        weather = "loading...",
+                        location = LatLng(lat, lng)
+                    )
+                )
+            } else {
+                println("Location not found for the city: $name")
+            }
+        }
     }
 
     fun addCity(lat: Double, lng: Double) {
-        fbDb.add(City("Cidade@$lat:$lng", LatLng(lat, lng)))
+        weatherService.getName(lat, lng) { name ->
+            fbDb.add(
+                City(
+                    name = name ?: "NOT_FOUND",
+                    location = LatLng(lat, lng),
+                    weather = "loading..."
+                )
+            )
+        }
     }
 
     fun remove(city: City) {

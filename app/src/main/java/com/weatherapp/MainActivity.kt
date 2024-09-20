@@ -112,7 +112,7 @@ class MainActivity : ComponentActivity() {
                             onDismiss = { showDialog = false },
                             onConfirm = { cityName ->
                                 if (cityName.isNotBlank()) {
-                                    repo.addCity(City(name = cityName, location = LatLng(0.0, 0.0)))
+                                    repo.addCity(name = cityName)
                                 }
                                 showDialog = false
                             }

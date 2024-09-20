@@ -64,7 +64,7 @@ fun MapPage(
             modifier = Modifier.fillMaxSize(),
             onMapClick = {
 
-                repo.addCity(City("City", LatLng(it.latitude, it.longitude)))
+                repo.addCity(lat = it.latitude, lng = it.longitude)
 
 
             },
