@@ -41,16 +41,20 @@ fun ListPage(
             .padding(8.dp)
     ){
         items(cities){
-                city -> CityItem(
-                        city = city,
-                        onClick = {
-                            Toast.makeText(context, "City added to your wish list", Toast.LENGTH_LONG).show()
+                city ->
+            if (city.weather == null) {
+                repo.loadWeather(city)
+            }
+            CityItem(
+                city = city,
+                onClick = {
+                    Toast.makeText(context, "City added to your wish list", Toast.LENGTH_LONG).show()
 
-                        },
-                        onClose = {
-                            repo.remove(city)
-                            Toast.makeText(context, "City was removed from your wish list", Toast.LENGTH_LONG).show()
-                        }
+                },
+                onClose = {
+                    repo.remove(city)
+                    Toast.makeText(context, "City was removed from your wish list", Toast.LENGTH_LONG).show()
+                }
             )
         }
     }
@@ -80,6 +84,7 @@ fun CityItem(
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1f)){
             Text(modifier = Modifier, text = city.name, fontSize = 24.sp)
+            Text(modifier = Modifier, text = city.weather?.desc?:"carregando...", fontSize = 16.sp)
 
         }
         IconButton(onClick = onClose) {

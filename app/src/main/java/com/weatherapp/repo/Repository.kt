@@ -5,6 +5,7 @@ import com.weatherapp.api.WeatherService
 import com.weatherapp.db.FBDatabase
 import com.weatherapp.models.City
 import com.weatherapp.models.User
+import com.weatherapp.models.Weather
 
 class Repository(private var listener: Listener) : FBDatabase.Listener {
     private var fbDb = FBDatabase(this)
@@ -14,6 +15,7 @@ class Repository(private var listener: Listener) : FBDatabase.Listener {
         fun onUserLoaded(user: User)
         fun onCityAdded(city: City)
         fun onCityRemoved(city: City)
+        fun onCityUpdated(city: City)
     }
 
     fun addCity(name: String) {
@@ -22,7 +24,6 @@ class Repository(private var listener: Listener) : FBDatabase.Listener {
                 fbDb.add(
                     City(
                         name = name,
-                        weather = "loading...",
                         location = LatLng(lat, lng)
                     )
                 )
@@ -38,9 +39,21 @@ class Repository(private var listener: Listener) : FBDatabase.Listener {
                 City(
                     name = name ?: "NOT_FOUND",
                     location = LatLng(lat, lng),
-                    weather = "loading..."
                 )
             )
+        }
+    }
+
+    fun loadWeather(city: City) {
+        weatherService.getCurrentWeather(city.name) {
+            apiWeather -> city.weather =
+                Weather(
+                    date = apiWeather?.current?.last_updated ?: "...",
+                    desc = apiWeather?.current?.condition?.text ?: "...",
+                    temp = apiWeather?.current?.temp_c ?: -1.0,
+                    imgUrl = "https:" + apiWeather?.current?.condition?.icon
+                )
+                listener.onCityUpdated (city)
         }
     }
 
