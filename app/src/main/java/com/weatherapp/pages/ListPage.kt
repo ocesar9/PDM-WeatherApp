@@ -21,9 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.weatherapp.db.FBDatabase
+import androidx.navigation.NavHostController
+import com.weatherapp.components.nav.BottomNavItem
 import com.weatherapp.models.City
-import androidx.compose.runtime.remember
 import com.weatherapp.repo.Repository
 
 
@@ -32,63 +32,82 @@ fun ListPage(
     viewModel: MainViewModel,
     context: Context,
     repo: Repository,
+    navController: NavHostController
 
-    ) {
+) {
     val cities = viewModel.cities
-    LazyColumn (
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
-    ){
-        items(cities){
-                city ->
+    ) {
+        items(cities) { city ->
             if (city.weather == null) {
                 repo.loadWeather(city)
             }
             CityItem(
                 city = city,
                 onClick = {
-                    Toast.makeText(context, "City added to your wish list", Toast.LENGTH_LONG).show()
+                    viewModel.city = city
+                    repo.loadForecast (city)
+                    navController.navigate(BottomNavItem.HomePage.route) {
+                        navController.graph.startDestinationRoute?.let {
+                            popUpTo(it) {
+                                saveState = true
+                            }
+                            restoreState = true
+
+                        }
+                        launchSingleTop = true
+                    }
 
                 },
                 onClose = {
                     repo.remove(city)
-                    Toast.makeText(context, "City was removed from your wish list", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        "City was removed from your wish list",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
+                    )
+                }
+        }
+    }
+
+
+
+    @Composable
+
+    fun CityItem(
+        city: City,
+        onClick: () -> Unit,
+        onClose: () -> Unit,
+        modifier: Modifier = Modifier
+    ) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+                .clickable { onClick() },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                Icons.Rounded.FavoriteBorder,
+                contentDescription = "Favorite Border",
             )
+            Spacer(modifier = Modifier.size(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(modifier = Modifier, text = city.name, fontSize = 24.sp)
+                Text(
+                    modifier = Modifier,
+                    text = city.weather?.desc ?: "carregando...",
+                    fontSize = 16.sp
+                )
+
+            }
+            IconButton(onClick = onClose) {
+                Icon(Icons.Filled.Close, contentDescription = "Close")
+            }
         }
     }
-}
-
-
-
-@Composable
-
-fun CityItem(
-    city: City,
-    onClick: () -> Unit,
-    onClose: () -> Unit,
-    modifier: Modifier = Modifier
-){
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable { onClick() },
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        Icon(
-            Icons.Rounded.FavoriteBorder,
-            contentDescription = "Favorite Border",
-        )
-        Spacer(modifier = Modifier.size(12.dp))
-        Column(modifier = Modifier.weight(1f)){
-            Text(modifier = Modifier, text = city.name, fontSize = 24.sp)
-            Text(modifier = Modifier, text = city.weather?.desc?:"carregando...", fontSize = 16.sp)
-
-        }
-        IconButton(onClick = onClose) {
-            Icon(Icons.Filled.Close, contentDescription = "Close")
-        }
-    }
-}
