@@ -58,6 +58,13 @@ class Repository(private var listener: Listener) : FBDatabase.Listener {
         }
     }
 
+    fun loadBitmap(city: City) {
+        weatherService.getBitmap(city.weather!!.imgUrl) { bitmap ->
+            city.weather!!.bitmap = bitmap
+            listener.onCityUpdated (city)
+        }
+    }
+
     fun remove(city: City) {
         fbDb.remove(city)
     }
@@ -77,7 +84,7 @@ class Repository(private var listener: Listener) : FBDatabase.Listener {
                     imgUrl = ("https:" + it.day?.condition?.icon)
                 )
             }
-            listener.onCityUpdated (city)
+            listener.onCityUpdated(city)
         }
     }
 

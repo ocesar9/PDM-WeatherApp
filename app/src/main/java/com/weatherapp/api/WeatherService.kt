@@ -1,6 +1,9 @@
 package com.weatherapp.api
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.util.Log
+import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -66,9 +69,23 @@ class WeatherService {
     fun getForecast(name: String, onResponse: (WeatherForecast?) -> Unit) {
         val call: Call<WeatherForecast?> =
             weatherAPI.forecast(name)
-            enqueue (call) {
-                onResponse.invoke(it)
+        enqueue(call) {
+            onResponse.invoke(it)
+        }
+    }
+
+    fun getBitmap(imgUrl: String, onResponse: (Bitmap?) -> Unit) {
+        Picasso.get().load(imgUrl).into(object : com.squareup.picasso.Target {
+            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                onResponse.invoke(bitmap)
             }
+
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+                Log.w("WeatherApp WARNING", "" + e?.message)
+                e ?. printStackTrace ()
+            }
+        })
     }
 
 }
