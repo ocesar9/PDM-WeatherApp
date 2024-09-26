@@ -8,16 +8,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.weatherapp.R
 import com.weatherapp.models.Forecast
 import java.text.DecimalFormat
 
@@ -28,10 +27,11 @@ fun HomePage(
 ) {
     Column {
         Row {
-            Icon(
-                imageVector = Icons.Filled.AccountBox,
-                contentDescription = "Localized description",
-                modifier = Modifier.size(130.dp)
+            AsyncImage(
+                model = viewModel.city?.weather?.imgUrl,
+                modifier = Modifier.size(100.dp),
+                error = painterResource(id = R.drawable.loading_svgrepo_com),
+                contentDescription = "image-content"
             )
             val format = DecimalFormat("#.0")
             Column {
@@ -51,7 +51,9 @@ fun HomePage(
         }
         viewModel.city?.forecast?.let { forecastList ->
             LazyColumn(
-                modifier = modifier.fillMaxSize().padding(16.dp)
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
             ) {
                 items(forecastList) { forecast ->
                     ForecastItem(
@@ -72,15 +74,21 @@ fun ForecastItem(forecast: Forecast, onClick: (Forecast) -> Unit, modifier: Modi
     val format = DecimalFormat("#.0")
     val tempMin = format.format(forecast.tempMin)
     val tempMax = format.format(forecast.tempMax)
-    Row (modifier =
-        modifier.fillMaxWidth().padding(8.dp)
-            .clickable(onClick = { onClick(forecast) }), verticalAlignment = Alignment.CenterVertically) {
-        Icon(
-            imageVector = Icons.Filled.LocationOn,
-            contentDescription = "Localized description",
-            modifier = Modifier.size(40.dp)
+    Row(
+        modifier =
+        modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable(onClick = { onClick(forecast) }),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = forecast.imgUrl,
+            modifier = Modifier.size(40.dp),
+            error = painterResource(id = R.drawable.loading_svgrepo_com),
+            contentDescription = "image-content"
         )
-        Spacer (modifier = Modifier.size(12.dp))
+        Spacer(modifier = Modifier.size(12.dp))
         Column {
             Text(
                 modifier = Modifier,
@@ -89,10 +97,14 @@ fun ForecastItem(forecast: Forecast, onClick: (Forecast) -> Unit, modifier: Modi
             )
             Row {
                 Text(modifier = Modifier, text = forecast.date, fontSize = 16.sp)
-                Spacer (modifier =
-                    Modifier.size(12.dp))
-                Text (modifier =
-                    Modifier, text = "Min: $tempMin℃", fontSize = 14.sp)
+                Spacer(
+                    modifier =
+                    Modifier.size(12.dp)
+                )
+                Text(
+                    modifier =
+                    Modifier, text = "Min: $tempMin℃", fontSize = 14.sp
+                )
                 Spacer(modifier = Modifier.size(12.dp))
                 Text(modifier = Modifier, text = "Max: $tempMax℃", fontSize = 14.sp)
             }

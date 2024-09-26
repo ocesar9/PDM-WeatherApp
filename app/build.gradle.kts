@@ -111,4 +111,10 @@ dependencies {
     // Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Image loading (Coil for Compose, Picasso for traditional ImageView)
+    implementation ("com.squareup.picasso:picasso:2.8")
+    implementation("io.coil-kt:coil-compose:2.7.0")
+
+
 }
