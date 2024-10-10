@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,11 +22,13 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.weatherapp.R
 import com.weatherapp.models.Forecast
+import com.weatherapp.repo.Repository
 import java.text.DecimalFormat
 
 @Composable
 fun HomePage(
     viewModel: MainViewModel,
+    repo: Repository,
     modifier: Modifier = Modifier
 ) {
     Column {
@@ -36,16 +42,37 @@ fun HomePage(
             val format = DecimalFormat("#.0")
             Column {
                 Spacer(modifier = Modifier.size(20.dp))
-                Text(
-                    text = viewModel.city?.name
-                        ?: "Selecione uma cidade...", fontSize = 24.sp
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = viewModel.city?.name ?: "Selecione uma cidade...",
+                        fontSize = 24.sp
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+
+                    val icon = if (viewModel.city?.isMonitored == true) {
+                        Icons.Outlined.Favorite
+                    } else {
+                        Icons.Outlined.FavoriteBorder
+                    }
+
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = "Monitor?",
+                        modifier = Modifier.size(32.dp)
+                            .clickable (enabled = viewModel.city != null) {
+                                viewModel.city?.let { city ->
+                                    repo.update(city.copy(isMonitored = !city.isMonitored))
+                                }
+                            }
+                    )
+                }
                 Spacer(modifier = Modifier.size(10.dp))
                 Text(text = viewModel.city?.weather?.desc ?: "...", fontSize = 20.sp)
                 Spacer(modifier = Modifier.size(10.dp))
-                Text(text = "Temp: " + viewModel.city?.weather?.temp + "℃", fontSize = 20.sp)
+                Text(text = "Temp: ${viewModel.city?.weather?.temp}℃", fontSize = 20.sp)
             }
         }
+
         if (viewModel.city == null || viewModel.city!!.forecast == null) return
 
         viewModel.city?.forecast?.let { forecastList ->
@@ -74,8 +101,7 @@ fun ForecastItem(forecast: Forecast, onClick: (Forecast) -> Unit, modifier: Modi
     val tempMin = format.format(forecast.tempMin)
     val tempMax = format.format(forecast.tempMax)
     Row(
-        modifier =
-        modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(8.dp)
             .clickable(onClick = { onClick(forecast) }),
@@ -96,14 +122,8 @@ fun ForecastItem(forecast: Forecast, onClick: (Forecast) -> Unit, modifier: Modi
             )
             Row {
                 Text(modifier = Modifier, text = forecast.date, fontSize = 16.sp)
-                Spacer(
-                    modifier =
-                    Modifier.size(12.dp)
-                )
-                Text(
-                    modifier =
-                    Modifier, text = "Min: $tempMin℃", fontSize = 14.sp
-                )
+                Spacer(modifier = Modifier.size(12.dp))
+                Text(modifier = Modifier, text = "Min: $tempMin℃", fontSize = 14.sp)
                 Spacer(modifier = Modifier.size(12.dp))
                 Text(modifier = Modifier, text = "Max: $tempMax℃", fontSize = 14.sp)
             }

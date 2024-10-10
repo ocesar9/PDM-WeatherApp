@@ -14,9 +14,34 @@ class Repository(private var listener: Listener) : FBDatabase.Listener {
 
     interface Listener {
         fun onUserLoaded(user: User)
+        fun onUserSignOut()
         fun onCityAdded(city: City)
         fun onCityRemoved(city: City)
         fun onCityUpdated(city: City)
+    }
+
+    override fun onUserLoaded(user: User) {
+        listener.onUserLoaded(user)
+    }
+
+    override fun onUserSignOut() {
+        listener.onUserSignOut()
+    }
+
+    override fun onCityAdded(city: City) {
+        listener.onCityAdded(city)
+    }
+
+    override fun onCityRemoved(city: City) {
+        listener.onCityRemoved(city)
+    }
+
+    override fun onCityUpdated(city: City) {
+        listener.onCityUpdated(city)
+    }
+
+    fun update(city: City) {
+        fbDb.update(city)
     }
 
     fun addCity(name: String) {
@@ -61,7 +86,7 @@ class Repository(private var listener: Listener) : FBDatabase.Listener {
     fun loadBitmap(city: City) {
         weatherService.getBitmap(city.weather!!.imgUrl) { bitmap ->
             city.weather!!.bitmap = bitmap
-            listener.onCityUpdated (city)
+            listener.onCityUpdated(city)
         }
     }
 
@@ -86,17 +111,5 @@ class Repository(private var listener: Listener) : FBDatabase.Listener {
             }
             listener.onCityUpdated(city)
         }
-    }
-
-    override fun onUserLoaded(user: User) {
-        listener.onUserLoaded(user)
-    }
-
-    override fun onCityAdded(city: City) {
-        listener.onCityAdded(city)
-    }
-
-    override fun onCityRemoved(city: City) {
-        listener.onCityRemoved(city)
     }
 }

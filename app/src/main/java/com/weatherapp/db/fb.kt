@@ -15,12 +15,14 @@ class FBCity {
     var name: String? = null
     var lat: Double? = null
     var lng: Double? = null
+    var monitored: Boolean = false
 
     fun toCity(): City {
         val latlng = LatLng(lat ?: 0.0, lng ?: 0.0)
         return City(
             name!!,
-            location = latlng
+            location = latlng,
+            isMonitored = monitored
         )
     }
 }
@@ -31,6 +33,7 @@ fun City.toFBCity(): FBCity {
     fbCity.name = this.name
     fbCity.lat = this.location?.latitude ?: 0.0
     fbCity.lng = this.location?.longitude ?: 0.0
+    fbCity.monitored = this.isMonitored
 
     return fbCity
 }
@@ -65,12 +68,17 @@ class FBDatabase(
         fun onUserLoaded(user: User)
         fun onCityAdded(city: City)
         fun onCityRemoved(city: City)
+        fun onUserSignOut()
+        fun onCityUpdated(city: City)
+
+
     }
 
     init {
         auth.addAuthStateListener { auth ->
             if (auth.currentUser == null) {
                 citiesListReg?.remove()
+                listener?.onUserSignOut()
 
                 return@addAuthStateListener
             }
@@ -86,10 +94,10 @@ class FBDatabase(
                     if (ex != null) return@addSnapshotListener
                     snapshots?.documentChanges?.forEach { change ->
                         val fbCity = change.document.toObject(FBCity::class.java)
-                        if (change.type == DocumentChange.Type.ADDED) {
-                            listener?.onCityAdded(fbCity.toCity())
-                        } else if (change.type == DocumentChange.Type.REMOVED) {
-                            listener?.onCityRemoved(fbCity.toCity())
+                        when (change.type) {
+                            DocumentChange.Type.ADDED -> listener?.onCityAdded(fbCity.toCity())
+                            DocumentChange.Type.REMOVED -> listener?.onCityRemoved(fbCity.toCity())
+                            DocumentChange.Type.MODIFIED -> listener?.onCityUpdated(fbCity.toCity())
                         }
                     }
                 }
@@ -107,6 +115,16 @@ class FBDatabase(
         val uid = auth.currentUser!!.uid
         db.collection("users").document(uid).collection("cities").document(city.name)
             .set(city.toFBCity())
+    }
+
+    fun update(city: City) {
+        if (auth.currentUser == null) throw RuntimeException("Not logged in!")
+        val uid = auth.currentUser!!.uid
+        val fbCity = city.toFBCity()
+        val changes = mapOf( "lat" to fbCity.lat, "lng" to fbCity.lng,
+            "monitored" to fbCity.monitored )
+        db.collection("users").document(uid)
+            .collection("cities").document(fbCity.name!!).update(changes)
     }
 
     fun remove(city: City) {

@@ -24,7 +24,6 @@ class MainViewModel : ViewModel(), Repository.Listener {
     private val _cities = mutableStateMapOf<String, City>()
     val cities: List<City> get() = _cities.values.toList()
 
-
     //  LoggedIn
     private var _loggedIn = mutableStateOf(false)
     val loggedIn: Boolean get() = _loggedIn.value
@@ -38,11 +37,10 @@ class MainViewModel : ViewModel(), Repository.Listener {
     }
 
     override fun onCleared() {
-        Firebase.auth.removeAuthStateListener(listener);
+        Firebase.auth.removeAuthStateListener(listener)
     }
 
-//  User
-
+    //  User
     override fun onUserLoaded(user: User) {
         _user.value = user
     }
@@ -59,9 +57,18 @@ class MainViewModel : ViewModel(), Repository.Listener {
     override fun onCityUpdated(city: City) {
         _cities.remove(city.name)
         _cities[city.name] = city.copy()
-
         if (_city.value?.name == city.name) {
-            _city.value = city.copy()
+            _city.value = city.copy(
+                weather = if (city.weather != null) city.weather
+                else _city.value?.weather,
+                forecast = if (city.forecast != null) city.forecast
+                else _city.value?.forecast
+            )
         }
     }
+
+    override fun onUserSignOut() {
+
+    }
 }
+

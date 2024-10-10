@@ -11,7 +11,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -21,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.weatherapp.R
@@ -49,6 +53,7 @@ fun ListPage(
             }
             CityItem(
                 city = city,
+                repo = repo,
                 onClick = {
                     viewModel.city = city
                     repo.loadForecast(city)
@@ -82,6 +87,7 @@ fun ListPage(
 
 fun CityItem(
     city: City,
+    repo: Repository,
     onClick: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
@@ -101,13 +107,30 @@ fun CityItem(
         )
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(modifier = Modifier, text = city.name, fontSize = 24.sp)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(modifier = Modifier, text = city.name, fontSize = 24.sp)
+                Spacer(modifier = Modifier.size(8.dp))
+
+                val icon = if (city.isMonitored) {
+                    Icons.Outlined.Favorite
+                } else {
+                    Icons.Outlined.FavoriteBorder
+                }
+
+                Icon(
+                    imageVector = icon,
+                    contentDescription = "Monitor?",
+                    modifier = Modifier.size(32.dp)
+                        .clickable {
+                            repo.update(city.copy(isMonitored = !city.isMonitored))
+                        }
+                )
+            }
             Text(
                 modifier = Modifier,
                 text = city.weather?.desc ?: "carregando...",
                 fontSize = 16.sp
             )
-
         }
         IconButton(onClick = onClose) {
             Icon(Icons.Filled.Close, contentDescription = "Close")

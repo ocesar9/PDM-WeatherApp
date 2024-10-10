@@ -7,4 +7,5 @@ data class City(
     var location: LatLng? = null,
     var weather: Weather? = null,
     var forecast: List<Forecast>? = null,
+    var isMonitored: Boolean = false
 )
