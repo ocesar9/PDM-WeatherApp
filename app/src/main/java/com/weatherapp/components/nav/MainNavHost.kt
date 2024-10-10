@@ -11,7 +11,7 @@ import com.weatherapp.repo.Repository
 fun MainNavHost(
     navController: NavHostController,
     viewModel: MainViewModel,
-    repository: Repository,
+    repo: Repository,
     context: Context
 ) {
     NavHost(
@@ -21,14 +21,14 @@ fun MainNavHost(
         composable(route = BottomNavItem.HomePage.route) {
             HomePage(
                 viewModel = viewModel,
-                repo = repository,
+                repo = repo,
             )
         }
         composable(route = BottomNavItem.ListPage.route) {
             ListPage(
                 viewModel = viewModel,
                 context = context,
-                repo = repository,
+                repo = repo,
                 navController = navController
             )
         }
@@ -36,7 +36,7 @@ fun MainNavHost(
             MapPage(
                 context = context,
                 viewModel = viewModel,
-                repo = repository
+                repo = repo
             )
         }
     }

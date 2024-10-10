@@ -33,36 +33,53 @@ import androidx.navigation.compose.rememberNavController
 import com.weatherapp.components.nav.BottomNavItem
 import com.weatherapp.ui.theme.WeatherAppTheme
 import android.Manifest
+import android.content.Intent
+import androidx.compose.runtime.DisposableEffect
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.weatherapp.db.FBDatabase
 import com.weatherapp.models.City
 import com.weatherapp.repo.Repository
+import java.util.function.Consumer
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
-    private val viewModel: MainViewModel by viewModels();
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         if (!viewModel.loggedIn) {
-            this.finish();
-        }else {
+            this.finish()
+        } else {
             setContent {
                 var showDialog by remember { mutableStateOf(false) }
                 val navController = rememberNavController()
-                val repo = remember { Repository (viewModel) }
+                val repo = remember { Repository(viewModel) }
+
+                // Corrigindo o tipo para androidx.core.util.Consumer
+                DisposableEffect(Unit) {
+                    val listener = androidx.core.util.Consumer<Intent> { intent ->
+                        val name = intent.getStringExtra("city")
+                        val city = viewModel.cities.find { it.name == name }
+                        viewModel.city = city
+                        if (city != null) {
+                            repo.loadWeather(city)
+                            repo.loadForecast(city)
+                        }
+                    }
+                    addOnNewIntentListener(listener)
+                    onDispose { removeOnNewIntentListener(listener) }
+                }
 
                 val context = LocalContext.current
                 val currentRoute = navController.currentBackStackEntryAsState()
-                val showButton =
-                    currentRoute.value?.destination?.route != BottomNavItem.MapPage.route
+                val showButton = currentRoute.value?.destination?.route != BottomNavItem.MapPage.route
                 val launcher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.RequestPermission(),
-                    onResult = {})
-
+                    onResult = {}
+                )
 
                 WeatherAppTheme {
                     Scaffold(
@@ -76,7 +93,6 @@ class MainActivity : ComponentActivity() {
                                             finish()
                                         }
                                     ) {
-
                                         Icon(
                                             imageVector = Icons.Default.ExitToApp,
                                             contentDescription = "Localized description"
@@ -95,14 +111,15 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                             }
-
                         }
                     ) { innerPadding ->
                         Box(modifier = Modifier.padding(innerPadding)) {
                             launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                             MainNavHost(
-                                navController = navController,viewModel,repo,context
-
+                                navController = navController,
+                                viewModel = viewModel,
+                                repo = repo,
+                                context = context
                             )
                         }
                     }
@@ -119,10 +136,9 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
-
-
             }
         }
     }
-
 }
+
+
