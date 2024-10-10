@@ -4,7 +4,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.weatherapp.components.nav.BottomNavItem
-import com.weatherapp.db.FBDatabase
 import com.weatherapp.repo.Repository
 
 @Composable

@@ -35,13 +35,9 @@ import com.weatherapp.ui.theme.WeatherAppTheme
 import android.Manifest
 import android.content.Intent
 import androidx.compose.runtime.DisposableEffect
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.weatherapp.db.FBDatabase
-import com.weatherapp.models.City
 import com.weatherapp.repo.Repository
-import java.util.function.Consumer
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
@@ -56,9 +52,8 @@ class MainActivity : ComponentActivity() {
             setContent {
                 var showDialog by remember { mutableStateOf(false) }
                 val navController = rememberNavController()
-                val repo = remember { Repository(viewModel) }
+                val repo = remember { Repository(viewModel, context = this@MainActivity) }
 
-                // Corrigindo o tipo para androidx.core.util.Consumer
                 DisposableEffect(Unit) {
                     val listener = androidx.core.util.Consumer<Intent> { intent ->
                         val name = intent.getStringExtra("city")
@@ -140,5 +135,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 

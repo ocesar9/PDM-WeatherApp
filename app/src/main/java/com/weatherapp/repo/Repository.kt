@@ -1,16 +1,28 @@
 package com.weatherapp.repo
 
+import android.content.Context
 import com.google.android.gms.maps.model.LatLng
 import com.weatherapp.api.WeatherService
 import com.weatherapp.db.FBDatabase
+import com.weatherapp.local.LocalDB
 import com.weatherapp.models.City
 import com.weatherapp.models.Forecast
 import com.weatherapp.models.User
 import com.weatherapp.models.Weather
 
-class Repository(private var listener: Listener) : FBDatabase.Listener {
+
+class Repository(
+    private var listener: Listener,
+    context: Context
+
+) : FBDatabase.Listener {
     private var fbDb = FBDatabase(this)
     private var weatherService = WeatherService()
+    private var localDB: LocalDB = LocalDB(context, databaseName = "local.db")
+
+    init {
+        localDB.getCities { fbDb.add(it) }
+    }
 
     interface Listener {
         fun onUserLoaded(user: User)
@@ -40,13 +52,13 @@ class Repository(private var listener: Listener) : FBDatabase.Listener {
         listener.onCityUpdated(city)
     }
 
-    fun update(city: City) {
-        fbDb.update(city)
-    }
-
     fun addCity(name: String) {
         weatherService.getLocation(name) { lat, lng ->
             if (lat != null && lng != null) {
+                localDB.insert(City(
+                    name = name,
+                    location = LatLng(lat, lng)
+                ))
                 fbDb.add(
                     City(
                         name = name,
@@ -61,6 +73,12 @@ class Repository(private var listener: Listener) : FBDatabase.Listener {
 
     fun addCity(lat: Double, lng: Double) {
         weatherService.getName(lat, lng) { name ->
+            localDB.insert(
+                City(
+                    name = name ?: "NOT_FOUND",
+                    location = LatLng(lat, lng),
+                )
+            )
             fbDb.add(
                 City(
                     name = name ?: "NOT_FOUND",
@@ -91,7 +109,13 @@ class Repository(private var listener: Listener) : FBDatabase.Listener {
     }
 
     fun remove(city: City) {
+        localDB.delete(city)
         fbDb.remove(city)
+    }
+
+    fun update(city: City) {
+        localDB.delete(city)
+        fbDb.update(city)
     }
 
     fun register(userName: String, email: String) {
