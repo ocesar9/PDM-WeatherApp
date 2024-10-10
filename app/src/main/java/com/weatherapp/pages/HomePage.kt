@@ -46,9 +46,8 @@ fun HomePage(
                 Text(text = "Temp: " + viewModel.city?.weather?.temp + "℃", fontSize = 20.sp)
             }
         }
-        if (viewModel.city == null || viewModel.city!!.forecast == null) {
-            return
-        }
+        if (viewModel.city == null || viewModel.city!!.forecast == null) return
+
         viewModel.city?.forecast?.let { forecastList ->
             LazyColumn(
                 modifier = modifier
