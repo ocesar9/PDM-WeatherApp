@@ -1,8 +1,6 @@
 # WeatherApp ☁️
 
 [![NPM](https://img.shields.io/npm/l/react)](https://github.com/ocesar9/PDM-WeatherApp/blob/main/LICENSE)
-[![Android](https://img.shields.io/badge/Platform-Android-green)](https://developer.android.com/)
-[![Kotlin](https://img.shields.io/badge/Language-Kotlin-purple)](https://kotlinlang.org/)
 [![Firebase](https://img.shields.io/badge/weatherapp-ae957)]()
 
 
