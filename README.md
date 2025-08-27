@@ -3,6 +3,8 @@
 [![NPM](https://img.shields.io/npm/l/react)](https://github.com/ocesar9/PDM-WeatherApp/blob/main/LICENSE)
 [![Android](https://img.shields.io/badge/Platform-Android-green)](https://developer.android.com/)
 [![Kotlin](https://img.shields.io/badge/Language-Kotlin-purple)](https://kotlinlang.org/)
+[![Firebase](https://img.shields.io/badge/weatherapp-ae957)]()
+
 
 ## 📋 Sobre o Projeto
 
@@ -68,6 +70,12 @@ Tela de gerenciamento das cidades marcadas como favoritas, com opções de confi
 - **[OpenWeatherMap API](https://openweathermap.org/api)** - Dados meteorológicos em tempo real
 - **[Android Location Services](https://developer.android.com/training/location)** - Geolocalização e GPS
 
+### Arquitetura & Padrões
+- **MVVM (Model-View-ViewModel)** - Padrão arquitetural para separação de responsabilidades
+- **Repository Pattern** - Abstração da camada de dados
+- **Dependency Injection** - Injeção de dependências com Hilt/Dagger
+- **Coroutines** - Programação assíncrona em Kotlin
+
 ## 📦 Como Executar o Projeto
 
 ### Pré-requisitos
@@ -75,6 +83,14 @@ Tela de gerenciamento das cidades marcadas como favoritas, com opções de confi
 - SDK Android 21+ (Android 5.0 Lollipop)
 - Chave da API OpenWeatherMap
 - Projeto configurado no Firebase
+
+### Configuração das APIs
+```kotlin
+// 1. Obtenha uma chave gratuita em: https://openweathermap.org/api
+// 2. Configure o Firebase Console para seu projeto
+// 3. Baixe o arquivo google-services.json
+// 4. Adicione as chaves no arquivo local.properties
+```
 
 ### Instalação
 ```bash
@@ -114,6 +130,30 @@ MAPS_API_KEY=sua_chave_google_maps
 - **Fragment Navigation** - Navegação moderna entre telas
 - **Material Design** - Interface seguindo design system do Google
 - **Background Processing** - Workers para atualizações periódicas
+
+## 🌟 Funcionalidades Avançadas
+
+### Sistema de Notificações
+- **Alertas Personalizados** - Configure notificações por cidade
+- **Background Updates** - Atualizações automáticas em segundo plano
+- **Threshold Alerts** - Alertas baseados em mudanças de temperatura
+
+### Integração com Mapas
+- **Markers Customizados** - Ícones meteorológicos no mapa
+- **Cluster Management** - Agrupamento de marcadores próximos
+- **Offline Support** - Cache de dados para uso offline
+
+### Performance
+- **Image Optimization** - Carregamento eficiente de ícones climáticos
+- **Data Caching** - Armazenamento local para reduzir requisições
+- **Background Sync** - Sincronização inteligente de dados
+
+## 📱 Compatibilidade
+
+- **Android 5.0+** (API level 21+)
+- **Arquiteturas:** ARM, ARM64, x86, x86_64
+- **Orientação:** Portrait e Landscape
+- **Idiomas:** Português (BR), Inglês
 
 ## 📄 Licença
 
